@@ -1,0 +1,53 @@
+﻿@using System.Configuration;
+@using System;
+@using System.Data;
+@using MySql.Data;
+@using MySql.Data.MySqlClient;
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>This will become a simple database example</title>
+</head>
+<body>
+<h1>This will become a simple database example</h1>
+@{
+    MySqlConnection conn = new MySqlConnection(ConfigurationManager.ConnectionStrings["MyDb"].ConnectionString);
+    try
+    {
+        conn.Open();
+        // put a new number in the database
+        if(IsPost)
+        {
+            MySqlCommand cmdInsert = new MySqlCommand("INSERT INTO numbers(theNumber) VALUES(@theNumber)", conn);
+            cmdInsert.Parameters.AddWithValue("@theNumber", Int32.Parse(Request["newNumber"]));
+            int nRows = cmdInsert.ExecuteNonQuery();
+            if(nRows != 1)
+            {
+                throw new Exception("No Rows Inserted");
+            }
+        }
+        
+        
+        // display numbers already in database
+        MySqlCommand cmdSelect = new MySqlCommand("SELECT theNumber FROM numbers", conn);
+        MySqlDataReader result = cmdSelect.ExecuteReader();
+        while(result.Read())
+        {
+            <p>@result[0]</p>
+        }
+    }
+    catch(Exception e)
+    {
+        <p> Error @e.Message</p>
+    }
+    finally
+    {
+        conn.Close();
+    }
+    <form action="" method="post">
+        <input type="text" name="newNumber" />
+        <input type="submit" value="Add" />
+    </form>
+}
+</body>
+</html>

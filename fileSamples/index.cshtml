@@ -87,7 +87,7 @@
             var xhr = new XMLHttpRequest();
             // Open our connection using the POST method - note that the url is supplied to the javascript in the c# code
 
-            xhr.open("POST", "@Request.Url.ToString()");
+            xhr.open("POST", "@Request.PathInfo");
 
             xhr.send(formData);
 

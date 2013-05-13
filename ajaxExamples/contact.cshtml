@@ -66,7 +66,7 @@
             var oData = {
                 country: jQuery("#country").val()
             };
-            jQuery("#statePostal").load("contact.cshtml #statePostal", oData);
+            jQuery("#statePostal").load("@Request.Url.ToString() #statePostal", oData);
         });
     </script>
 

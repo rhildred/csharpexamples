@@ -1,22 +1,4 @@
-﻿@{
-    String sImagePath = "";
-
-    WebImage image = null;
-    
-    if(IsPost)
-    {
-        image = WebImage.GetImageFromRequest();
-        if(image != null)
-        {
-            String sPath = Path.GetFileName(image.FileName);
-            sImagePath = "images/" + sPath;
-            image.Resize(width: 320, height: 320, preserveAspectRatio: true, preventEnlarge: true);
-            image.AddTextWatermark("Rich was here!", fontColor: "Black", fontFamily: "Arial");
-
-            image.Save(sImagePath);
-        }
-    }
-}
+﻿@using CloudinaryDotNet;
 <!DOCTYPE html>
 <html>
     <head>
@@ -38,9 +20,38 @@
             <input type="submit" value="Upload" />
         </fieldset>
         <div id="displayImage">
-        @if (sImagePath != "")
-        {
-            <img src="@sImagePath" alt="uploaded image" />
+        @{
+    
+            if(IsPost)
+            {
+                try{
+                    WebImage image = WebImage.GetImageFromRequest();
+                    if(image != null)
+                    {
+                        String sImagePath = "images/" + Path.GetFileName(image.FileName);
+                        image.Resize(width: 320, height: 320, preserveAspectRatio: true, preventEnlarge: true);
+                        image.AddTextWatermark("Rich was here!", fontColor: "Black", fontFamily: "Arial", opacity:90);
+
+                        image.Save(sImagePath);
+            
+                        // now we will add it to cloudinary
+                        Cloudinary cloudinary = new Cloudinary("cloudinary://283344254821121:INXwnv9AJtOP9PUdmR-xxVa2DTk@hfm9olpom");
+                        CloudinaryDotNet.Actions.ImageUploadParams uploadParams = new CloudinaryDotNet.Actions.ImageUploadParams()
+                        {
+                            File = new CloudinaryDotNet.Actions.FileDescription(Request.PhysicalApplicationPath + sImagePath)
+                        };
+
+                        CloudinaryDotNet.Actions.ImageUploadResult uploadResult = cloudinary.Upload(uploadParams);
+                        string url = cloudinary.Api.UrlImgUp.BuildUrl(String.Format("{0}.{1}", uploadResult.PublicId, uploadResult.Format));  
+                        <img src="@url" alt="User Uploaded Image" title="User Uploaded Image" />
+
+                    }
+                }
+                catch(Exception e)
+                {
+                    <p>Error @e.Message</p>
+                }
+            }
         }
         </div>
         </form>
@@ -55,35 +66,39 @@
             // Explicitly show this is a copy.
         });
         jQuery("#dropTarget").bind('drop', function (evt) {
+            // step 1 disable events
             evt.stopPropagation();
             evt.preventDefault();
+
+            // step 2 get the file that was dropped into a formdata object
             if (evt.dataTransfer.files === undefined) {
                 alert("Internet Explorer doesn't support file drop yet ... Please use the Upload mechanism, below");
                 return;
             }
             var files = evt.dataTransfer.files;
-            // files is a FileList of File objects. List some properties.
+            // files is a FileList of File objects. We are only uploading the first one here.
             myFileObject = files[0];
             var formData = new FormData();
             // Append our file to the formData object
             // Notice the first argument "file" and keep it in mind
             formData.append('fileToUpload', myFileObject);
-            // Create our XMLHttpRequest Object
+            // Step 3 Create our XMLHttpRequest Object - note that we use an XMLHttpRequest so that we can send FormData with it
             var xhr = new XMLHttpRequest();
+            // Open our connection using the POST method - note that the url is supplied to the javascript in the c# code
 
+            xhr.open("POST", "@Request.Url.ToString()");
+
+            xhr.send(formData);
+
+            // Step 4 listen for the result and display the image if it worked
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == 4 && xhr.status == 200) {
-                    document.getElementById("displayImage").innerHTML = "<img src=\"images/" + myFileObject.name + "\" />";
+                    // if we have the image on the server then we can put it in the displayImage div (which has to exist)
+                    //document.getElementById("displayImage").innerHTML = "test";
+                    jQuery("#displayImage").html(jQuery(xhr.responseText).find("#displayImage")); 
                 }
             }
 
-            // Open our connection using the POST method
-
-            xhr.open("POST", 'DragAndDrop.cshtml');
-
-            //display return value
-
-            xhr.send(formData);
         });
 
     </script>

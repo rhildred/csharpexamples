@@ -51,7 +51,7 @@
             jQuery("#searchResults").html("<img src=\"images/turningArrow.gif\" />");
             var oData = { query: jQuery("#query").val() };
             setTimeout(function () {
-                jQuery("#searchResults").load("shipSearchAjax.cshtml #searchResults", oData);
+                jQuery("#searchResults").load("@Request.Url.ToString() #searchResults", oData);
             }, 3000);
             return false;
         });

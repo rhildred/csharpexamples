@@ -39,7 +39,7 @@
             var oData = { textInput1: jQuery("#textInput1").val(),
                 textInput2: jQuery("#textInput2").val()
             };
-            jQuery("#results").load("Add2NumbersAjax.cshtml #results", oData);
+            jQuery("#results").load("@Request.Url.ToString() #results", oData);
             return false;
         });
     </script>

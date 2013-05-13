@@ -1,0 +1,26 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <title>Test of Strings Capability</title>
+    </head>
+    <body>
+        <h1>Test of Strings Capability</h1>
+        @{
+            StringLoader sLoader = new StringLoader("User=root;Database=sample");
+            try
+            {
+                <p>@sLoader.get("test")</p>
+                <p>@sLoader.get("test2")</p>
+                 sLoader.put("test7", "this was updated/inserted programatically");
+            }
+            catch (Exception e)
+            {
+                <p>Exception @e.Message</p>
+            }
+            finally
+            {
+                sLoader.Close();
+            }
+        }
+    </body>
+</html>

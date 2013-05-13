@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <title>Multipage Site</title>
+    </head>
+    <body>
+        @RenderPage("_header.cshtml")
+        <article>
+        @{
+            String sUrl = "https://www.googleapis.com/customsearch/v1?key={0}&cx={1}&alt=json&q={2}";
+            String sKey = "AIzaSyAiM2k9sPSGFS4TV_2vQwymDvvI5K_hb9E";
+            String sCx = "014261563278459372447:mzr_2m1eihe";
+            WebClient conn = new WebClient();
+            try
+            {
+                String sResponse = conn.DownloadString(String.Format(sUrl, sKey, sCx, Request["q"]));
+                var oResults = Json.Decode(sResponse);
+                <p>search results for term @oResults.queries.request[0].searchTerms</p>
+                if(oResults.items != null)
+                {
+                    foreach(var oItem in oResults.items)
+                    {
+                        <h1><a href="@oItem.link" >@oItem.title</a></h1>
+                        <p>@Html.Raw(oItem.htmlSnippet)</p>
+                    }
+                }
+                else
+                {
+                    <p>no search results found for term @oResults.queries.request[0].searchTerms please try again with another term</p>
+                }
+            }
+            catch(Exception e)
+            {
+                <p>Exception @e.Message</p>
+            }
+            finally
+            {
+                conn.Dispose();
+            }
+        }
+        </article>
+        @RenderPage("_footer.cshtml")
+    </body>
+</html>

@@ -1,0 +1,47 @@
+﻿@using System;
+@using System.Data;
+@using MySql.Data;
+@using MySql.Data.MySqlClient;
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Add a New Ship</title>
+    </head>
+    <body>
+    <h1>Add A New Ship</h1>
+        <form action="" method="post">
+            <p><label for="type">Type of Vessel</label><br /><input type="text" name="type" /></p>
+            <p><label for="class">Class of Vessel</label><br /><input type="text" name="class" /></p>
+            <p><label for="numberOfCrew">Number of Crew on Vessel</label><br /><input type="text" name="numberOfCrew" /></p>
+            <p><label for="commisioned">Date Commisioned</label><br /><input type="text" name="commisioned" /></p>
+            <p><label for="name">Name of Vessel</label><br /><input type="text" name="name" /></p>
+            <input type="submit" value="Add Ship" />
+        </form>
+        @if(IsPost){
+            MySqlConnection conn = new MySqlConnection("user=root;database=sample");
+            try
+            {
+                conn.Open();
+                String sSQL = "INSERT INTO ships(type, class, numberOfCrew, commisioned, name) VALUES(@type, @class, @numberOfCrew, @commisioned, @name)";
+                MySqlCommand cmd = new MySqlCommand(sSQL, conn);
+                
+                cmd.Parameters.AddWithValue("type", Request["type"]);
+                cmd.Parameters.AddWithValue("class", Request["class"]);
+                cmd.Parameters.AddWithValue("numberOfCrew", Int32.Parse(Request["numberOfCrew"]));
+                cmd.Parameters.AddWithValue("commisioned", DateTime.Parse(Request["commisioned"]));
+                cmd.Parameters.AddWithValue("name", Request["name"]);
+                int nRows = cmd.ExecuteNonQuery();
+                <p>@nRows rows inserted into the database</p>
+                    
+            }
+            catch (Exception e)
+            {
+                <p>SQL Error message was @e.Message</p>
+            }
+            finally
+            {
+                conn.Close();
+            }
+        }
+    </body>
+</html>

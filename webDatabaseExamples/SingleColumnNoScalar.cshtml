@@ -1,0 +1,37 @@
+﻿@using System;
+@using System.Data;
+@using MySql.Data;
+@using MySql.Data.MySqlClient;
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Select a single column from ship Virginia</title>
+    </head>
+    <body>
+        <h1>Select a single column from ship Virginia</h1>
+        @{
+            MySqlConnection conn = new MySqlConnection("server=localhost;user=root;database=sample");
+            try
+            {
+                conn.Open();
+                String sSQL = "SELECT DISTINCT(numberofcrew) FROM ships WHERE class = 'Virginia'";
+                MySqlCommand cmd = new MySqlCommand(sSQL, conn);
+                MySqlDataReader results = cmd.ExecuteReader();
+                while(results.Read())
+                {
+                    <p>Virginia class ship with @results[0] crew</p>
+                }
+                    
+            }
+            catch(Exception e)
+            {
+                <p>SQL Error @e.Message</p>
+            }
+            finally
+            {
+                conn.Close();
+            }
+                                       
+        }
+    </body>
+</html>

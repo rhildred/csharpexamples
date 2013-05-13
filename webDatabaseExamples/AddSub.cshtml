@@ -1,0 +1,33 @@
+﻿@using System;
+@using System.Data;
+@using MySql.Data.MySqlClient;
+@using MySql.Data;
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Add a new sub</title>
+    </head>
+    <body>
+        <h1>Add a new sub</h1>
+        @{
+            MySqlConnection conn = new MySqlConnection("server=localhost;user=root;database=sample");
+            try
+            {
+                conn.Open();
+                String sSQL = "INSERT INTO ships (type, class, numberofcrew, commisioned, name) VALUES('submarine', 'Virginia', 134, '1994-03-17', 'Sea Wolf')";
+                MySqlCommand cmd = new MySqlCommand(sSQL, conn);
+                int nRows = cmd.ExecuteNonQuery();
+                long nRowID = cmd.LastInsertedId;
+                <p>@nRows inserted ... rowid was @nRowID</p>
+            }
+            catch(Exception e)
+            {
+                <p>SQL Error @e.Message</p>
+            }
+            finally
+            {
+                conn.Close();
+            }
+        }
+    </body>
+</html>

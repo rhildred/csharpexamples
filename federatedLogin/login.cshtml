@@ -1,0 +1,63 @@
+﻿@using System.Collections.Specialized;
+@{
+    
+    // first find redirect url (I want to redirect to this same page)
+    String sRedirectUrl = Request.Url.ToString();
+    int nQueryParam = sRedirectUrl.IndexOf('?');
+    if(nQueryParam != -1)
+    {
+        sRedirectUrl = sRedirectUrl.Substring(0, nQueryParam);
+    }
+    
+    // make the web client
+    WebClient conn = new WebClient();
+    
+    String sClientId = "95842300516.apps.googleusercontent.com";
+    try
+    {
+        // step 1
+        if(Request["code"] == null)
+        {
+            String sAuthUrl = "https://accounts.google.com/o/oauth2/auth?redirect_uri={0}&client_id={1}&scope=https://www.googleapis.com/auth/userinfo.profile&response_type=code&max_auth_age=0";
+            String sRedirectToGoogle = String.Format(sAuthUrl, sRedirectUrl, sClientId);
+            Response.Redirect(sRedirectToGoogle);
+        }
+        else
+        {
+            //step 5
+            String sCode = Request["code"];
+            // then google has redirected to us so build up query for 2nd phase of authentication
+            NameValueCollection pairs = new NameValueCollection()
+            {
+                { "grant_type", "authorization_code" },
+                { "client_id", sClientId },
+                { "client_secret", "JB2DBmIDDKRmNgsbcmwK4yKm" },
+                { "code", sCode },
+                { "redirect_uri", sRedirectUrl }
+            };
+            //step 6
+            byte[] response = conn.UploadValues("https://accounts.google.com/o/oauth2/token", pairs);
+            
+            // response is a byte array so need to convert it to a string
+            String result = System.Text.Encoding.UTF8.GetString(response);
+            var oResult = Json.Decode(result);
+            String sAccessToken = oResult.access_token;
+            
+            // step 7
+            // now we can get the user info
+            String sUserInfoUrl = "https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token={0}";
+            String sInfo = conn.DownloadString(String.Format(sUserInfoUrl, sAccessToken));
+            var oInfo = Json.Decode(sInfo);
+            <p>Hello @oInfo.name</p>
+            
+        }
+    }
+    catch(Exception e)
+    {
+        <p>Error @e.Message</p>
+    }
+    finally
+    {
+        conn.Dispose();
+    }
+}

@@ -1,0 +1,29 @@
+﻿@using System;
+@using System.Data;
+@using MySql.Data;
+@using MySql.Data.MySqlClient;
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Database Open Example</title>
+    </head>
+    <body>
+    <h1>Database Open Example</h1>
+        @{
+            MySqlConnection conn = new MySqlConnection("user=root;database=sample");
+            try
+            {
+                conn.Open();
+                <p>the database is open</p>
+            }
+            catch(Exception e)
+            {
+                <p>the open failed message was @e.Message</p>
+            }
+            finally
+            {
+                conn.Close();
+            }
+        }
+    </body>
+</html>

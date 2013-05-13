@@ -1,0 +1,37 @@
+﻿@using System;
+@using System.Data;
+@using MySql.Data;
+@using MySql.Data.MySqlClient;
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>A List of Ships from the database</title>
+    </head>
+    <body>
+    <h1>A List of Ships from the database</h1>
+        @{
+            MySqlConnection conn = new MySqlConnection("user=root;database=sample");
+            try
+            {
+                conn.Open();
+                String sSQL = "SELECT type, class, numberofcrew, commisioned, name FROM ships";
+                MySqlCommand cmd = new MySqlCommand(sSQL, conn);
+                MySqlDataReader results = cmd.ExecuteReader();
+                <table>
+                @while (results.Read())
+                {
+                    <tr><td>@results[0]</td><td>@results[1]</td><td>@results[2]</td><td>@results[3]</td><td>@results[4]</td></tr>
+                }
+                </table>
+            }
+            catch(Exception e)
+            {
+                <p>Error message was @e.Message</p>
+            }
+            finally
+            {
+                conn.Close();
+            }
+        }
+    </body>
+</html>

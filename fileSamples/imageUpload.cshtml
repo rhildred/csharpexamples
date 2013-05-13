@@ -1,0 +1,39 @@
+﻿@{
+    String sImagePath = "";
+
+    WebImage image = null;
+    
+    if(IsPost)
+    {
+        image = WebImage.GetImageFromRequest();
+        if(image != null)
+        {
+            String sPath = Path.GetFileName(image.FileName);
+            sImagePath = "images/" + sPath;
+            image.Save(sImagePath);
+        }
+    }
+}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Image Upload</title>
+    </head>
+    <body>
+        <h1>Image Upload</h1>
+        <form action="" method="post" enctype="multipart/form-data">
+        <fieldset>
+            <legend>Upload Image</legend>
+            <p>
+            <label for="fileToUpload">File To Upload</label><br />
+            <input type="file" name="fileToUpload" />
+            </p>
+            <input type="submit" value="Upload" />
+        </fieldset>
+        @if (sImagePath != "")
+        {
+            <img src="@sImagePath" alt="uploaded image" />
+        }
+        </form>
+    </body>
+</html>

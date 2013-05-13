@@ -1,0 +1,45 @@
+﻿@using System;
+@using System.Data;
+@using MySql.Data;
+@using MySql.Data.MySqlClient;
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Search for Ships By Name</title>
+    </head>
+    <body>
+    <h1>Search for Ships By Name</h1>
+        @{
+            MySqlConnection conn = new MySqlConnection("user=root;database=sample");
+            try
+            {
+                String sQuery = "";
+                if(Request["query"] != null)
+                {
+                    sQuery = Request["query"];
+                }
+                conn.Open();
+                String sSQL = "SELECT type, class, numberofcrew, commisioned, name FROM ships WHERE name LIKE CONCAT('%', '" + sQuery + "', '%')";
+                MySqlCommand cmd = new MySqlCommand(sSQL, conn);
+                MySqlDataReader results = cmd.ExecuteReader();
+                <form action="" method="get">
+                <input type="text" name="query" /><input type="submit" value="Search" />
+                </form>
+                <table>
+                @while (results.Read())
+                {
+                    <tr><td>@results[0]</td><td>@results[1]</td><td>@results[2]</td><td>@results[3]</td><td>@results[4]</td></tr>
+                }
+                </table>
+            }
+            catch(Exception e)
+            {
+                <p>SQL Error message was @e.Message</p>
+            }
+            finally
+            {
+                conn.Close();
+            }
+        }
+    </body>
+</html>

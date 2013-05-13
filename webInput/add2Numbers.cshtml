@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Add 2 Numbers</title>
+</head>
+<body>
+    <h1>
+        Add 2 Numbers</h1>
+    <form action="" method="post">
+    @{
+        try
+        {
+            String sTextInput1 = "";
+            if (Request["textInput1"] != null)
+            {
+                sTextInput1 = Request["textInput1"];
+            }
+            String sTextInput2 = "";
+            if (Request["textInput2"] != null)
+            {
+                sTextInput2 = Request["textInput2"];
+            }
+        <p>
+            <label for="textInput1">
+                Enter First Number</label><br />
+            <input type="text" name="textInput1" value="@sTextInput1" /></p>
+        <p>
+            <label for="textInput2">
+                Enter Second Number</label><br />
+            <input type="text" name="textInput2" value="@sTextInput2" /></p>
+        <input type="submit" value="Add" />
+            if (sTextInput1 != "" && sTextInput2 != "")
+            {
+                Decimal nInput1 = Decimal.Parse(sTextInput1);
+                Decimal nInput2 = Decimal.Parse(sTextInput2);
+                Decimal nResult = nInput1 + nInput2;
+        <p>
+            Sum of @nInput1 + @nInput2 = @nResult</p>
+            }
+        }
+        catch (Exception e)
+        {
+        <p>
+            Exception @e.Message</p>
+        }
+    }
+    </form>
+</body>
+</html>

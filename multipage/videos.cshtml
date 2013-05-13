@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <title>Youtube Videos</title>
+    </head>
+    <body>
+        @RenderPage("_header.cshtml")
+        <article>
+        @{
+            String sUrl = "http://gdata.youtube.com/feeds/api/users/newapproachcanine/uploads?alt=json";
+            WebClient conn = new WebClient();
+            try
+            {
+                String sResult = conn.DownloadString(sUrl);
+                var oResult = Json.Decode(sResult);
+                if(oResult.feed.entry != null)
+                {
+                    foreach(var oEntry in oResult.feed.entry)
+                    {
+                        <h1><a href="@oEntry.link[0].href" >@oEntry.title["$t"]</a></h1>
+                        <img src="@oEntry["media$group"]["media$thumbnail"][1].url" />
+                        <p>@oEntry.content["$t"]</p>
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                <p>Error @e.Message</p>
+            }
+            finally
+            {
+                conn.Dispose();
+            }
+        }
+        </article>
+        @RenderPage("_footer.cshtml")
+        
+    </body>
+</html>

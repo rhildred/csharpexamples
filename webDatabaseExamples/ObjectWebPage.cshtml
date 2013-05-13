@@ -1,0 +1,22 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <title>get member from demo object</title>
+    </head>
+    <body>
+        <h1>get member from demo object</h1>
+        @{
+            try
+            {
+                Demo dNew = new Demo();
+                <p>Demo object says @dNew.nDemo</p>
+                int nThrows = @dNew.throws();
+                <p>Demo object says you shouldn't see this</p>
+            }
+            catch (Exception e)
+            {
+                <p>Demo object is broken @e.Message</p>
+            }
+        }
+    </body>
+</html>

@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <title>Add 2 Numbers</title>
+    </head>
+    <body>
+        <h1>Add 2 Numbers</h1>
+        <form action="" method="post">
+            <p><label for="textInput1">Enter First Number</label><br /><input type="text" name="textInput1" id="textInput1" /></p>
+            <p><label for="textInput2">Enter Second Number</label><br /><input type="text" name="textInput2" id="textInput2" /></p>
+            <input id="submitButton" type="submit" value="Add" />
+        </form>
+        <div id="results">
+            @{
+                String sTextInput1 = Request["textInput1"];
+                String sTextInput2 = Request["textInput2"];
+                if(sTextInput1 != null && sTextInput2 != null)
+                {
+                    try
+                    {
+                        Decimal n1 = Decimal.Parse(sTextInput1);
+                        Decimal n2 = Decimal.Parse(sTextInput2);
+                        Decimal nResult = n1 + n2;
+                        
+                        <p>The Sum of @n1 + @n2 = @nResult</p>
+                    }
+                    catch(Exception e)
+                    {
+                        <p>Exception @e.Message</p>
+                    }
+                }
+            }
+        </div>
+    </body>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    <script type="text/javascript">
+        jQuery("#submitButton").click(function () {
+            jQuery("#results").html("<img src=\"images/turningArrow.gif\" />");
+            var oData = { textInput1: jQuery("#textInput1").val(),
+                textInput2: jQuery("#textInput2").val()
+            };
+            jQuery("#results").load("Add2NumbersAjax.cshtml #results", oData);
+            return false;
+        });
+    </script>
+</html>
+

@@ -1,0 +1,45 @@
+﻿@using System.Xml.Linq;
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Wow Jobs XML example</title>
+    </head>
+    <body>
+        <h1>Wow Jobs XML example</h1>
+        @{
+            String sUrl = "http://www.wowjobs.ca/wowrss.aspx?q={0}&l={1}&s=&sr=25&t=30&f=r&e=&si=A&Dup=H";
+            String sQuery = Request["q"] == null ? "Web Developer" : Request["q"];
+            String sPostal = Request["l"] == null ? "N2T1G8" : Request["l"];
+            try
+            {
+                XDocument xmlDoc = XDocument.Load(String.Format(sUrl, sQuery, sPostal));
+                String sTitle = xmlDoc.Element("rss").Element("channel").Element("title").Value;
+                <h2>@sTitle</h2>
+                <table>
+                @foreach(XElement xe in xmlDoc.Descendants("item"))
+                {
+                    String sItemTitle = xe.Element("title").Value;
+                    String sDescription = xe.Element("description").Value;
+                    String sAuthor = xe.Element("author").Value;
+                    String sPubDate = xe.Element("pubDate").Value;
+                    String sLink = xe.Element("link").Value;
+                    <tr>
+                        <td><a href="@sLink">@sItemTitle</a></td>
+                        <td>@Html.Raw(sDescription)</td>
+                        <td>@sAuthor</td>
+                        <td>@sPubDate</td>
+                    </tr>
+                }
+                </table>
+            }
+            catch(Exception e)
+            {
+                <p>Error @e.Message</p>
+            }
+            finally
+            {
+                //xmlDoc.Dispose();
+            }
+        }
+    </body>
+</html>

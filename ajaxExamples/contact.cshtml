@@ -1,0 +1,73 @@
+﻿@using System;
+@using System.Data;
+@using MySql.Data;
+@using MySql.Data.MySqlClient;
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Contact Form</title>
+    </head>
+    <body>
+        <h1>Contact Form</h1>
+        <form action="" method="get">
+            <p><label for="name">Name</label><br /><input type="text" name="name" /></p>
+            <p><label for="address1">Address 1</label><br /><input type="text" name="address1" /></p>
+            <p><label for="address2">Address 2</label><br /><input type="text" name="address2" /></p>
+            <p><label for="city">City</label><br /><input type="text" name="city" /></p>
+            <div id="statePostal">
+            @{
+                String sCountry = Request["country"];
+                if(sCountry == null)
+                {
+                    sCountry = "CA";
+                }
+                if(sCountry == "CA")
+                {
+                    <p><label for="province">Province</label><br /><input type="text" name="province" /></p>
+                    <p><label for="postCode">Postal Code</label><br /><input type="text" name="postCode" /></p>
+                }
+                else
+                {
+                    <p><label for="province">State</label><br /><input type="text" name="province" /></p>
+                    <p><label for="postCode">Zip Code</label><br /><input type="text" name="postCode" /></p>
+                }
+            }
+            </div>
+            @{
+                MySqlConnection conn = new MySqlConnection("user=root;database=contact;convert zero datetime=true");
+                try
+                {
+                    conn.Open();
+                    MySqlCommand cmd = new MySqlCommand("SELECT countryCode, countryName FROM countries ORDER BY countryName", conn);
+                    MySqlDataReader results = cmd.ExecuteReader();
+                    <p><label for="country">Country</label><br />
+                        <select id="country" name="country">
+                            <option value="CA">CANADA</option>
+                            <option value="US">UNITED STATES</option>
+                            <option disabled="disabled">----------</option>
+                            @while (results.Read())
+                            {
+                                <option value="@results[0]">@results[1]</option>
+                            }
+                    </select></p>
+
+                }
+                catch(Exception e)
+                {
+                    <p>Error building Country select @e.Message</p>
+                }
+            }
+        </form>
+    </body>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    <script type="text/javascript">
+        jQuery("#country").change(function () {
+            jQuery("#statePostal").html("<img src=\"images/turningArrow.gif\" />");
+            var oData = {
+                country: jQuery("#country").val()
+            };
+            jQuery("#statePostal").load("contact.cshtml #statePostal", oData);
+        });
+    </script>
+
+</html>

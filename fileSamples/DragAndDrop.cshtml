@@ -1,0 +1,90 @@
+﻿@{
+    String sImagePath = "";
+
+    WebImage image = null;
+    
+    if(IsPost)
+    {
+        image = WebImage.GetImageFromRequest();
+        if(image != null)
+        {
+            String sPath = Path.GetFileName(image.FileName);
+            sImagePath = "images/" + sPath;
+            image.Resize(width: 320, height: 320, preserveAspectRatio: true, preventEnlarge: true);
+            image.AddTextWatermark("Rich was here!", fontColor: "Black", fontFamily: "Arial");
+
+            image.Save(sImagePath);
+        }
+    }
+}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Image Upload</title>
+    </head>
+    <body>
+        <h1>Image Upload</h1>
+        <form action="" method="post" enctype="multipart/form-data">
+        <fieldset>
+            <legend>Upload Image</legend>
+            <div id="dropTarget">
+                <h2>Drop Image Here</h2>
+                <img src="images/drop-target.png" alt="Drop Images Here" title="Drop Images Here" /> 
+            </div>
+            <p>
+            <label for="fileToUpload">Or Browse to File To Upload</label><br />
+            <input type="file" name="fileToUpload" />
+            </p>
+            <input type="submit" value="Upload" />
+        </fieldset>
+        <div id="displayImage">
+        @if (sImagePath != "")
+        {
+            <img src="@sImagePath" alt="uploaded image" />
+        }
+        </div>
+        </form>
+    </body>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    <script type="text/javascript">
+        jQuery.event.props.push('dataTransfer');
+        jQuery("#dropTarget").bind('dragover', function (e) {
+            e.stopPropagation();
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'copy';
+            // Explicitly show this is a copy.
+        });
+        jQuery("#dropTarget").bind('drop', function (evt) {
+            evt.stopPropagation();
+            evt.preventDefault();
+            if (evt.dataTransfer.files === undefined) {
+                alert("Internet Explorer doesn't support file drop yet ... Please use the Upload mechanism, below");
+                return;
+            }
+            var files = evt.dataTransfer.files;
+            // files is a FileList of File objects. List some properties.
+            myFileObject = files[0];
+            var formData = new FormData();
+            // Append our file to the formData object
+            // Notice the first argument "file" and keep it in mind
+            formData.append('fileToUpload', myFileObject);
+            // Create our XMLHttpRequest Object
+            var xhr = new XMLHttpRequest();
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    document.getElementById("displayImage").innerHTML = "<img src=\"images/" + myFileObject.name + "\" />";
+                }
+            }
+
+            // Open our connection using the POST method
+
+            xhr.open("POST", 'DragAndDrop.cshtml');
+
+            //display return value
+
+            xhr.send(formData);
+        });
+
+    </script>
+</html>

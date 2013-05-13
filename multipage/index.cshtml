@@ -1,0 +1,14 @@
+﻿@using System.Configuration;
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Multipage Site</title>
+    </head>
+    <body>
+        @RenderPage("_header.cshtml")
+        <article>
+            <p>This is the content with a connection string @ConfigurationManager.ConnectionStrings["LocalMySqlServer"].ConnectionString</p>
+        </article>
+        @RenderPage("_footer.cshtml")
+    </body>
+</html>

@@ -2,9 +2,11 @@
 <html>
     <head>
         <title>Multipage Site</title>
+        <link type="text/css" rel="Stylesheet" href="Nav.css" />
     </head>
     <body>
         @RenderPage("_header.cshtml")
+        <nav id="searchResults">@RenderPage("_navSearch.cshtml")</nav>
         <article>
         @{
             String sUrl = "https://www.googleapis.com/customsearch/v1?key={0}&cx={1}&alt=json&q={2}";

@@ -3,9 +3,11 @@
 <html>
     <head>
         <title>Multipage Site</title>
+        <link type="text/css" rel="Stylesheet" href="Nav.css" />
     </head>
     <body>
         @RenderPage("_header.cshtml")
+        <nav id="index">@RenderPage("_navSearch.cshtml")</nav>
         <article>
             <p>This is the content with a connection string @ConfigurationManager.ConnectionStrings["LocalMySqlServer"].ConnectionString</p>
         </article>

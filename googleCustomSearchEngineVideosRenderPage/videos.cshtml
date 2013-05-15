@@ -2,9 +2,11 @@
 <html>
     <head>
         <title>Youtube Videos</title>
+        <link type="text/css" rel="Stylesheet" href="Nav.css" />
     </head>
     <body>
         @RenderPage("_header.cshtml")
+        <nav id="videos">@RenderPage("_navSearch.cshtml")</nav>
         <article>
         @{
             String sUrl = "http://gdata.youtube.com/feeds/api/users/newapproachcanine/uploads?alt=json";
@@ -18,7 +20,7 @@
                     foreach(var oEntry in oResult.feed.entry)
                     {
                         <h1><a href="@oEntry.link[0].href" >@oEntry.title["$t"]</a></h1>
-                        <img src="@oEntry["media$group"]["media$thumbnail"][1].url" />
+                        <img src="@oEntry["media$group"]["media$thumbnail"][1].url" alt="thumbnail from Youtube" />
                         <p>@oEntry.content["$t"]</p>
                     }
                 }

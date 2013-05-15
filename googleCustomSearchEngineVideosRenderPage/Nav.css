@@ -1,0 +1,35 @@
+﻿nav ul {
+    width: 100%;
+    float: left;
+    padding: 0;
+    background-color: #f2f2f2;
+    border-bottom: 1px solid #ccc; 
+    border-top: 1px solid #ccc; 
+    margin: 0 0 3em 0;
+    list-style: none; }
+nav li {
+    float: left; }
+nav li a {
+    display: block;
+    padding: 8px 15px;
+    text-decoration: none;
+    font-weight: bold;
+    color: #069;
+    border-right: 1px solid #ccc; }
+nav li a:hover
+{    color: #c00;
+    background-color: #fff; }
+    
+nav#index a[href$="."],
+nav#videos a[href$="videos.cshtml"] {
+    color: #c00;
+    pointer-events: none; }
+nav form 
+{
+    position: absolute;
+    right: 1em;
+    padding-top: 8px; 
+    }
+nav form label
+{
+    padding-right: 5px;}

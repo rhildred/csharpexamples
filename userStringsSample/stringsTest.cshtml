@@ -1,0 +1,21 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <title>Test of User Generated Strings</title>
+    </head>
+    <body>
+        <h1>Test of User Generated Strings</h1>
+        @{
+            Strings sLoader = new Strings("User=root;Database=usersite;convert zero datetime=true");
+            try
+            {
+                <p>sLoader Created test1 was @sLoader.get("test1")</p>
+                sLoader.put("test3", "this string was created/updated programatically");
+            }
+            finally
+            {
+                sLoader.Close();
+            }
+        }
+    </body>
+</html>

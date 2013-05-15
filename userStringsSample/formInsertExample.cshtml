@@ -1,0 +1,54 @@
+﻿@{
+    String sKey = "";
+    String sValue = "";
+    if(IsPost)
+    {
+        sKey = Request["sKey"];
+        sValue = Request["sValue"];
+        Strings sLoader = new Strings("User=root;Database=usersite;convert zero datetime=true");
+        try{
+            sLoader.put(sKey, sValue);
+        }
+        catch(Exception e)
+        {
+            <p>Exception @e.Message</p>
+        }
+        finally
+        {
+            sLoader.Close();
+        }
+    }
+}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Form Entry of a new string</title>
+    </head>
+    <body>
+        <h1>Form Entry of a new string</h1>
+        <form action="" method="post">
+            <p><label for="sKey">Enter Key</label><br /><input id="textInput1" type="text" name="sKey" /> </p>
+            <p><label for="sValue">Enter Value</label><br /><textarea id="textInput2" rows="5" cols="40" name="sValue"></textarea> </p>
+            <input type="submit" id="submitButton" value="Update" />
+        </form>
+        <div id="results">
+            @{
+                if(IsPost)
+                {
+                    <p>Key @sKey succesfully updated</p>
+                }                
+            }
+        </div>
+    </body>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    <script type="text/javascript">
+        jQuery("#submitButton").click(function () {
+            jQuery("#results").html("<img src=\"images/turningArrow.gif\" />");
+            var oData = { sKey: jQuery("#textInput1").val(),
+                sValue: jQuery("#textInput2").val()
+            };
+            jQuery("#results").load("formInsertExample.cshtml #results", oData);
+            return false;
+        });
+    </script>
+</html>

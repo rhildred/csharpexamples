@@ -1,0 +1,21 @@
+﻿@{
+    if(IsPost)
+    {
+        Strings sLoader = new Strings("User=root;Database=usersite;convert zero datetime=true");
+        try{
+            UnvalidatedRequestValues unvalidatedRequest = Validation.Unvalidated(Request);
+            String sKey = unvalidatedRequest["sKey"];
+            String sValue = unvalidatedRequest["sValue"];
+            sLoader.put(sKey, sValue);
+            <p>Key @sKey succesfully updated</p>
+        }
+        catch(Exception e)
+        {
+            <p>Exception @e.Message</p>
+        }
+        finally
+        {
+            sLoader.Close();
+        }
+    }
+}

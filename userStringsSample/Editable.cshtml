@@ -1,0 +1,38 @@
+﻿@using System.Configuration;
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Editable strings on screen</title>
+        <style>
+            textarea
+            {
+                width: 50%;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Editable strings on screen</h1>
+        @{
+            Strings sLoader = new Strings("User=root;Database=usersite;convert zero datetime=true");
+            try
+            {
+                <div class="editable", id="test16">@Html.Raw(sLoader.get("test16"))</div>
+                <div class="editable", id="newstring">@Html.Raw(sLoader.get("newstring"))</div>
+                <div class="editable", id="test2">@Html.Raw(sLoader.get("test2"))</div>
+            }
+            catch (Exception e)
+            {
+                <p>Exception @e.Message</p>
+            }
+            finally
+            {
+                sLoader.Close();
+            }
+        }
+        <div id="outputArea"></div>
+    </body>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    <script type="text/javascript" src="js/wiky.js"></script>
+    <script type="text/javascript" src="js/jquery.autogrowtextarea.js"></script>
+    <script type="text/javascript" src="js/editable.js"></script>
+</html>

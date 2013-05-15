@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Event Propagation Experiment</title>
+</head>
+<body style="border:1px solid Black">
+    <h1>Event Propagation Experiment</h1>
+    <form id="form1" style="border:1px solid Blue">
+        <input type="button" id = "button1" value="Click Me 1" />
+    </form>
+    <form id="form2" style="border:1px solid Red">
+        <input type="button" id = "button2" value="Click Me 2" />
+    </form>
+</body>
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+<script type="text/javascript">
+
+    jQuery("body").click(function (e) {
+        alert("body clicked");
+    });
+    jQuery("#form1").click(function (e) {
+        alert("form1 clicked  this.id = " + this.id + " e target = " + e.currentTarget.id);
+    });
+    jQuery("#form2").click(function (e) {
+        alert("form2 clicked this.id = " + this.id + " e target = " + e.currentTarget.id);
+    });
+    jQuery("#button1").click(function (e) {
+        alert("button1 clicked this.id = " + this.id + " e target = " + e.currentTarget.id);
+        //e.stopPropagation();
+        //e.preventDefault();
+    });
+    jQuery("#button2").click(function (e) {
+        alert("button2 clicked second function this.id = " + this.id + " e target = " + e.currentTarget.id);
+    });
+    jQuery("#button2").click(function (e) {
+        alert("button2 clicked this.id = " + this.id + " e target = " + e.currentTarget.id);
+    });
+
+</script>
+
+</html>

@@ -1,0 +1,43 @@
+﻿@{
+    // there will be an oauth2 no matter what to use in my page
+    Oauth2 oauth2 = new Oauth2("put your client id here", "put your secret here", Request.Url.ToString());
+    try
+    {
+        String sCode = Request["code"];
+        if(sCode != null)
+        {
+            oauth2.HandleCode(sCode);
+        }
+        else if(Request["login"] != null) 
+        {
+            oauth2.Redirect((HttpResponseWrapper)Response);
+        }
+    }
+    catch(Exception e)
+    {
+        <p>Error @e.Message</p>
+    }
+    finally
+    {
+        oauth2.Close();
+    }
+}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>login with oauth2 class</title>
+    </head>
+    <body>
+        <div style="text-align:right">
+        @if (oauth2.sGoogleId == null)
+        {
+            <a href="?login=true">login</a>
+        }
+        else
+        {
+            <a href="?login=true">logout @oauth2.sName</a>
+        }
+        </div>
+        <h1>login with oauth2 class</h1>
+    </body>
+</html>

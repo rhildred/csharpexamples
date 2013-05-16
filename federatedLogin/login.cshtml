@@ -12,7 +12,7 @@
     // make the web client
     WebClient conn = new WebClient();
     
-    String sClientId = "95842300516.apps.googleusercontent.com";
+    String sClientId = "put your client id in here";
     try
     {
         // step 1
@@ -31,7 +31,7 @@
             {
                 { "grant_type", "authorization_code" },
                 { "client_id", sClientId },
-                { "client_secret", "JB2DBmIDDKRmNgsbcmwK4yKm" },
+                { "client_secret", "put your secret in here" },
                 { "code", sCode },
                 { "redirect_uri", sRedirectUrl }
             };

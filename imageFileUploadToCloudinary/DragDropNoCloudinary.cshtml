@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <title>Image Upload</title>
+    </head>
+    <body>
+        <h1>Image Upload</h1>
+        <form action="" method="post" enctype="multipart/form-data">
+        <fieldset>
+            <legend>Upload Image</legend>
+            <div id="dropTarget">
+                <h2>Drop Image Here</h2>
+                <img src="images/drop-target.png" alt="Drop Images Here" title="Drop Images Here" /> 
+            </div>
+            <p>
+            <label for="fileToUpload">Or Browse to File To Upload</label><br />
+            <input type="file" name="fileToUpload" />
+            </p>
+            <input type="submit" value="Upload" />
+        </fieldset>
+        <div id="displayImage">
+        @{
+    
+            if(IsPost)
+            {
+                try{
+                    WebImage image = WebImage.GetImageFromRequest();
+                    if(image != null)
+                    {
+                        String sImagePath = "images/" + Path.GetFileName(image.FileName);
+                        image.Resize(width: 320, height: 320, preserveAspectRatio: true, preventEnlarge: true);
+                        image.AddTextWatermark("Rich was here!", fontColor: "Black", fontFamily: "Arial", opacity:90);
+
+                        image.Save(sImagePath);
+            
+                        <img src="@sImagePath" alt="User Uploaded Image" title="User Uploaded Image" />
+
+                    }
+                }
+                catch(Exception e)
+                {
+                    <p>Error @e.Message</p>
+                }
+            }
+        }
+        </div>
+        </form>
+    </body>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    <script type="text/javascript">
+        jQuery.event.props.push('dataTransfer');
+        jQuery("#dropTarget").bind('dragover', function (e) {
+            e.stopPropagation();
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'copy';
+            // Explicitly show this is a copy.
+        });
+        jQuery("#dropTarget").bind('drop', function (evt) {
+            // step 1 disable events
+            evt.stopPropagation();
+            evt.preventDefault();
+
+            // step 2 get the file that was dropped into a formdata object
+            if (evt.dataTransfer.files === undefined) {
+                alert("Internet Explorer doesn't support file drop yet ... Please use the Upload mechanism, below");
+                return;
+            }
+            var files = evt.dataTransfer.files;
+            // files is a FileList of File objects. We are only uploading the first one here.
+            myFileObject = files[0];
+            var formData = new FormData();
+            // Append our file to the formData object
+            // Notice the first argument "file" and keep it in mind
+            formData.append('fileToUpload', myFileObject);
+            // Step 3 Create our XMLHttpRequest Object - note that we use an XMLHttpRequest so that we can send FormData with it
+            var xhr = new XMLHttpRequest();
+            // Open our connection using the POST method - note that the url is supplied to the javascript in the c# code
+
+            xhr.open("POST", "@Request.PathInfo");
+
+            xhr.send(formData);
+
+            // Step 4 listen for the result and display the image if it worked
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    // if we have the image on the server then we can put it in the displayImage div (which has to exist)
+                    //document.getElementById("displayImage").innerHTML = "test";
+                    jQuery("#displayImage").html(jQuery(xhr.responseText).find("#displayImage")); 
+                }
+            }
+
+        });
+
+    </script>
+</html>

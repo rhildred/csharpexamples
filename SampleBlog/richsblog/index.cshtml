@@ -1,6 +1,6 @@
 ﻿@{
     // there will be an oauth2 no matter what to use in my page
-    Oauth2 oauth2 = new Oauth2("put your client id here", "put your secret here", Request.Url.ToString());
+    Oauth2 oauth2 = new Oauth2("put your client id here", "put your secret here", Request.Url.ToString(), Session);
     try
     {
         String sCode = Request["code"];

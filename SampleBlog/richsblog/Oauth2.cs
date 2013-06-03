@@ -1,4 +1,4 @@
-﻿using System.Collections.Specialized;
+using System.Collections.Specialized;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,21 +16,34 @@ public class Oauth2
     String sKey = null;
     String sSecretToken = null;
     String sRedirect = null;
+    private HttpSessionStateBase Session;
     /// <summary>
     /// Name that has come back from Oauth2
     /// </summary>
-    public String sName = null;
+    public String sName
+    {
+        get
+        {
+            return (String)this.Session["sName"];
+        }
+    }
     /// <summary>
     /// Google Id that has come back from oauth2 ... there won't be one unless logged in
     /// </summary>
-    public String sGoogleId = null;
+    public String sGoogleId
+    {
+        get
+        {
+            return (String)this.Session["sGoogleId"];
+        }
+    }
     /// <summary>
     /// sets up a new Oauth2 object
     /// </summary>
     /// <param name="sClientId">Client ID from App Console</param>
     /// <param name="sSecret">Secret from App Console</param>
     /// <param name="sReturnUrl">where we return to after login</param>
-    public Oauth2(String sClientId, String sSecret, String sReturnUrl)
+    public Oauth2(String sClientId, String sSecret, String sReturnUrl, HttpSessionStateBase Session)
     {
         this.conn = new WebClient();
         this.sKey = sClientId;
@@ -44,7 +57,9 @@ public class Oauth2
             Regex rgxPort = new Regex(@":\d\d*");
             this.sRedirect = rgxPort.Replace(this.sRedirect, "");
         }
+        this.Session = Session;
     }
+
 
     /// <summary>
     /// does the initial redirect
@@ -60,9 +75,11 @@ public class Oauth2
 
     public void HandleCode(String sCode)
     {
-        //step 5
-        // then google has redirected to us so build up query for 2nd phase of authentication
-        NameValueCollection pairs = new NameValueCollection()
+        if (this.Session["sGoogleId"] == null)
+        {
+            //step 5
+            // then google has redirected to us so build up query for 2nd phase of authentication
+            NameValueCollection pairs = new NameValueCollection()
             {
                 { "grant_type", "authorization_code" },
                 { "client_id", this.sKey },
@@ -70,21 +87,22 @@ public class Oauth2
                 { "code", sCode },
                 { "redirect_uri", this.sRedirect }
             };
-        //step 6
-        byte[] response = conn.UploadValues("https://accounts.google.com/o/oauth2/token", pairs);
+            //step 6
+            byte[] response = conn.UploadValues("https://accounts.google.com/o/oauth2/token", pairs);
 
-        // response is a byte array so need to convert it to a string
-        String result = System.Text.Encoding.UTF8.GetString(response);
-        var oResult = Json.Decode(result);
-        String sAccessToken = oResult.access_token;
+            // response is a byte array so need to convert it to a string
+            String result = System.Text.Encoding.UTF8.GetString(response);
+            var oResult = Json.Decode(result);
+            String sAccessToken = oResult.access_token;
 
-        // step 7
-        // now we can get the user info
-        String sUserInfoUrl = "https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token={0}";
-        String sInfo = conn.DownloadString(String.Format(sUserInfoUrl, sAccessToken));
-        var oInfo = Json.Decode(sInfo);
-        this.sName = oInfo.name;
-        this.sGoogleId = oInfo.id;
+            // step 7
+            // now we can get the user info
+            String sUserInfoUrl = "https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token={0}";
+            String sInfo = conn.DownloadString(String.Format(sUserInfoUrl, sAccessToken));
+            var oInfo = Json.Decode(sInfo);
+            this.Session["sName"] = oInfo.name;
+            this.Session["sGoogleId"] = oInfo.id;
+        }
     }
 
     public void Close()
